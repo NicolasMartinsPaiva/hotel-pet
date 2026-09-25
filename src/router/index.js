@@ -5,9 +5,15 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('../views/HomeView.vue'),
+      name: 'pets',
+      component: () => import('../views/AddPetView.vue/index.js'),
     },
+    {
+      path: '/pets/novo',
+      name: 'addPet',
+      component: () => import('../views/AddPetView.vue'),
+
+    }
   ],
 });
 
