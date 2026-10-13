@@ -24,14 +24,16 @@ function nomeDoTutor(tutorId) {
   return 'Tutor não encontrado';
 }
 
-function excluirPet(id) {
-  fetch(`${API_URL}/pets/${id}`, { method: 'DELETE' })
-    .then(() => {
-      pets.value = pets.value.filter(pet => pet.id !== id);
-    })
-    .catch(erro => {
-      console.log('Erro ao excluir o pet:', erro);
-    });
+async function excluirPet(id) {
+  const confirmarExclusao =  window.confirm('Tem certeza que deseja excluir este pet?');
+
+  if (confirmarExclusao) {
+   await fetch(`${API_URL}/pets/${id}`, {
+    method: 'DELETE',
+
+  });
+  await carregarDados();
+}
 }
 
 onMounted(carregarDados);
