@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
@@ -25,23 +25,23 @@ async function carregarTutor() {
   }
 }
 
-async function salvarEdicao() {
-  if (!tutor.value) {
+async function removerTutor() {
+  const confirmarExclusao = window.confirm(
+    'Tem certeza que deseja remover este tutor?',
+  );
+
+  if (!confirmarExclusao) {
     return;
   }
 
   try {
     await fetch(`${API_URL}/tutores/${route.params.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(tutor.value),
+      method: 'DELETE',
     });
 
     router.push({ name: 'tutores' });
   } catch (erro) {
-    console.log('Erro ao salvar as alterações do tutor:', erro);
+    console.log('Erro ao remover o tutor:', erro);
   }
 }
 
@@ -51,48 +51,75 @@ onMounted(carregarTutor);
 <template>
   <div v-if="tutor">
     <header class="mb-4">
-      <h1>Editar Tutor</h1>
-      <p class="mb-0 text-body-secondary">Atualize os dados do tutor.</p>
+      <h1>Detalhes do Tutor</h1>
+      <p class="mb-0 text-body-secondary">
+        Informações do tutor e pets vinculados.
+      </p>
     </header>
 
-    <form @submit.prevent="salvarEdicao">
-      <div class="col-md-6 mb-3">
-        <label
-          for="nome"
-          class="form-label"
-          >Nome:</label
-        >
-        <input
-          id="nome"
-          v-model="tutor.nome"
-          type="text"
-          class="form-control"
-          required
-        />
-      </div>
+    <div class="mb-4">
+      <h2>Dados do tutor</h2>
+      <p><strong>ID:</strong> {{ tutor.id }}</p>
+      <p><strong>Nome:</strong> {{ tutor.nome }}</p>
+      <p><strong>Telefone:</strong> {{ tutor.telefone }}</p>
+      <p><strong>Email:</strong> {{ tutor.email }}</p>
+      <p><strong>CPF/CNPJ:</strong> {{ tutor.cpfCnpj }}</p>
+      <p><strong>Data de nascimento:</strong> {{ tutor.dataNascimento }}</p>
+    </div>
 
-      <div class="col-md-6 mb-3">
-        <label
-          for="telefone"
-          class="form-label"
-          >Telefone:</label
+    <div class="mb-4">
+      <h2>Endereço</h2>
+      <p><strong>CEP:</strong> {{ tutor.cep }}</p>
+      <p><strong>Rua:</strong> {{ tutor.rua || 'Rua não informada' }}</p>
+      <p><strong>Número:</strong> {{ tutor.numero }}</p>
+      <p><strong>Bairro:</strong> {{ tutor.bairro }}</p>
+      <p><strong>Cidade:</strong> {{ tutor.cidade }}</p>
+      <p><strong>Estado:</strong> {{ tutor.estado }}</p>
+    </div>
+
+    <div class="mb-4">
+      <h2>Pets vinculados</h2>
+      <ul
+        v-if="tutor.pets && tutor.pets.length"
+        class="list-group"
+      >
+        <li
+          v-for="pet in tutor.pets"
+          :key="pet.id"
+          class="list-group-item d-flex justify-content-between align-items-center"
         >
-        <input
-          id="telefone"
-          v-model="tutor.telefone"
-          type="tel"
-          class="form-control"
-          required
-        />
-      </div>
+          <span>{{ pet.nome }}</span>
+          <RouterLink
+            class="btn btn-sm btn-primary"
+            :to="{ name: 'detalhes-pet', params: { id: pet.id } }"
+          >
+            Visualizar
+          </RouterLink>
+        </li>
+      </ul>
+      <p
+        v-else
+        class="mb-0"
+      >
+        Nenhum pet vinculado a este tutor.
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <RouterLink
+        class="btn btn-primary"
+        :to="{ name: 'tutores' }"
+      >
+        Voltar
+      </RouterLink>
 
       <button
-        type="submit"
-        class="btn btn-success"
+        class="btn btn-danger"
+        @click="removerTutor"
       >
-        Salvar alterações
+        Remover Tutor
       </button>
-    </form>
+    </div>
   </div>
 
   <div v-else>Carregando tutor...</div>
