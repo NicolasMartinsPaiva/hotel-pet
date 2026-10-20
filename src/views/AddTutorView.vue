@@ -12,11 +12,25 @@ const novoTutor = ref({
   cpfCnpj: '',
   dataNascimento: '',
   cep: '',
+  rua: '',
   numero: '',
   bairro: '',
   cidade: '',
   estado: '',
 });
+
+const cepApi = ref({});
+
+async function buscaCep(cep) {
+  const API_CEP = 'https://viacep.com.br/ws';
+  const respostaCep = await fetch(`${API_CEP}/${cep}/json/`);
+  cepApi.value = await respostaCep.json();
+
+  novoTutor.value.rua = cepApi.value.logradouro;
+  novoTutor.value.bairro = cepApi.value.bairro;
+  novoTutor.value.cidade = cepApi.value.localidade;
+  novoTutor.value.estado = cepApi.value.uf;
+}
 
 async function salvarTutor() {
   try {
@@ -41,6 +55,7 @@ async function salvarTutor() {
       cpfCnpj: '',
       dataNascimento: '',
       cep: '',
+      rua: '',
       numero: '',
       bairro: '',
       cidade: '',
@@ -74,6 +89,7 @@ async function salvarTutor() {
           v-model="novoTutor.nome"
           type="text"
           class="form-control"
+          placeholder="Digite o nome do tutor"
           required
         />
       </div>
@@ -90,6 +106,7 @@ async function salvarTutor() {
           v-model="novoTutor.telefone"
           type="tel"
           class="form-control"
+          placeholder="(00) 00000-0000"
           required
         />
       </div>
@@ -106,6 +123,7 @@ async function salvarTutor() {
           v-model="novoTutor.email"
           type="email"
           class="form-control"
+          placeholder="exemplo@email.com"
         />
       </div>
 
@@ -121,6 +139,7 @@ async function salvarTutor() {
           v-model="novoTutor.cpfCnpj"
           type="text"
           class="form-control"
+          placeholder="CPF ou CNPJ"
         />
       </div>
 
@@ -151,8 +170,26 @@ async function salvarTutor() {
         <input
           id="cep"
           v-model="novoTutor.cep"
+          @blur="buscaCep(novoTutor.cep)"
           type="text"
           class="form-control"
+          placeholder="00000-000"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label
+          for="rua"
+          class="form-label"
+        >
+          Rua:
+        </label>
+        <input
+          id="rua"
+          v-model="novoTutor.rua"
+          type="text"
+          class="form-control"
+          placeholder="Rua"
         />
       </div>
 
@@ -168,6 +205,7 @@ async function salvarTutor() {
           v-model="novoTutor.numero"
           type="text"
           class="form-control"
+          placeholder="Número"
         />
       </div>
 
@@ -183,6 +221,7 @@ async function salvarTutor() {
           v-model="novoTutor.bairro"
           type="text"
           class="form-control"
+          placeholder="Bairro"
         />
       </div>
 
@@ -198,6 +237,7 @@ async function salvarTutor() {
           v-model="novoTutor.cidade"
           type="text"
           class="form-control"
+          placeholder="Cidade"
         />
       </div>
       <div class="mb-3">
@@ -212,12 +252,13 @@ async function salvarTutor() {
           v-model="novoTutor.estado"
           type="text"
           class="form-control"
+          placeholder="Estado"
         />
       </div>
 
       <button
         type="submit"
-        class="btn btn-success"
+        class="btn btn-success mt-2"
       >
         Salvar
       </button>
