@@ -1,18 +1,29 @@
+
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
+import { apiRequest } from '../services/api.js';
 
-const API_URL = 'http://localhost:3000';
 const router = useRouter();
+const erroApi = ref('');
 
 const novoTutor = ref({
   nome: '',
+  cpfCnpj: '',
   telefone: '',
+  dataNascimento: '',
+  observacoes: '',
+  cep: '',
+  rua: '',
+  numero: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
 });
 
 async function salvarTutor() {
   try {
-    await fetch(`${API_URL}/tutores`, {
+    await apiRequest('/tutores', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,13 +32,9 @@ async function salvarTutor() {
     });
 
     router.push({ name: 'tutores' });
-
-    novoTutor.value = {
-      nome: '',
-      telefone: '',
-    };
   } catch (erro) {
-    console.log('Erro ao salvar o novo tutor:', erro);
+    console.error('Erro ao salvar o novo tutor:', erro);
+    erroApi.value = erro.message;
   }
 }
 </script>
@@ -35,49 +42,167 @@ async function salvarTutor() {
 <template>
   <div>
     <header class="mb-4">
-      <h1 class="text-2xl font-bold">Cadastro de Tutor</h1>
-      <p class="text-body-secondary mb-0">
-        Adicionar um novo tutor ao sistema.
+      <h1 class="text-2xl font-bold">Cadastrar Tutores</h1>
+      <p class="text-body-secondary">
+        Cadastro de Tutores no sistema.
       </p>
     </header>
 
+    <RouterLink
+      :to="{ name: 'tutores' }"
+      class="btn btn-outline-primary mb-2"
+    >
+      Lista Tutores
+    </RouterLink>
+
+    <div
+      v-if="erroApi"
+      class="alert alert-danger"
+      role="alert"
+    >
+      {{ erroApi }}
+    </div>
+
     <form @submit.prevent="salvarTutor">
-      <div class="col-md-6 mb-3">
-        <label
-          for="nome"
-          class="form-label"
-          >Nome do tutor:</label
-        >
-        <input
-          id="nome"
-          v-model="novoTutor.nome"
-          type="text"
-          class="form-control"
-          required
-        />
+
+      <h4 class="mb-2">Dados Gerais</h4>
+
+      <div class="row">
+
+        <div class="col-md-4 mb-2">
+          <label for="nome" class="form-label">
+            Nome Completo:
+          </label>
+          <input
+            id="nome"
+            v-model="novoTutor.nome"
+            type="text"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="cpfCnpj" class="form-label">
+            CPF /CNPJ:
+          </label>
+          <input
+            id="cpfCnpj"
+            v-model="novoTutor.cpfCnpj"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="telefone" class="form-label">
+            Telefone / WhatsApp:
+          </label>
+          <input
+            id="telefone"
+            v-model="novoTutor.telefone"
+            type="tel"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="dataNascimento" class="form-label">
+            Data de Nascimento
+          </label>
+          <input
+            id="dataNascimento"
+            v-model="novoTutor.dataNascimento"
+            type="date"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-8 mb-2">
+          <label for="observacoes" class="form-label">
+            Observações:
+          </label>
+          <textarea
+            id="observacoes"
+            v-model="novoTutor.observacoes"
+            class="form-control"
+            rows="2"
+          ></textarea>
+        </div>
+
       </div>
 
-      <div class="col-md-6 mb-3">
-        <label
-          for="telefone"
-          class="form-label"
-          >Telefone:</label
-        >
-        <input
-          id="telefone"
-          v-model="novoTutor.telefone"
-          type="tel"
-          class="form-control"
-          required
-        />
+      <h4 class="mt-3 mb-2">Endereço</h4>
+
+      <div class="row">
+
+        <div class="col-md-4 mb-2">
+          <label for="cep" class="form-label">CEP</label>
+          <input
+            id="cep"
+            v-model="novoTutor.cep"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="rua" class="form-label">Rua:</label>
+          <input
+            id="rua"
+            v-model="novoTutor.rua"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="numero" class="form-label">Número:</label>
+          <input
+            id="numero"
+            v-model="novoTutor.numero"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="bairro" class="form-label">Bairro</label>
+          <input
+            id="bairro"
+            v-model="novoTutor.bairro"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="cidade" class="form-label">Cidade:</label>
+          <input
+            id="cidade"
+            v-model="novoTutor.cidade"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label for="estado" class="form-label">Estado:</label>
+          <input
+            id="estado"
+            v-model="novoTutor.estado"
+            type="text"
+            class="form-control"
+          />
+        </div>
+
       </div>
 
-      <button
-        type="submit"
-        class="btn btn-success"
-      >
-        Salvar
+      <button type="submit" class="btn btn-success mt-1">
+        Salvar Tutor
       </button>
+
     </form>
   </div>
 </template>

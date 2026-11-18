@@ -1,19 +1,23 @@
 <script setup>
   import { onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRouter } from 'vue-router';
+  import { apiRequest } from '../services/api.js';
 
  // chamando a minha API para exibir os dados de tutor
-  const API_URL = 'http://localhost:3000';
-  const router = useRoute();
+  const router = useRouter();
+  const erroApi = ref('');
 
   // chamando a minha API para exibir os dados de tutor
   const tutores = ref([]);
 
   async function carregarTutores() {
-    const resposta = await fetch(`${API_URL}/tutores`);
-    console.log('tutores', resposta);
-    // transformando os valores da minha API para o fromato JSON
-    tutores.value = await resposta.json();
+    try {
+      tutores.value = await apiRequest('/tutores');
+      erroApi.value = '';
+    } catch (erro) {
+      console.error('Erro ao carregar tutores:', erro);
+      erroApi.value = erro.message;
+    }
   }
 
   // chamando a minha API para salvar os dados de pet
@@ -24,22 +28,19 @@
   });
 
   async function salvarPet() {
-    // fazendo a requisição para a API para o servidor
-    await fetch(`${API_URL}/pets`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(novoPet.value),
-    });
-    router.push({'name': 'pets'});
-
-    // limpando os campos do formulário
-    novoPet.value = {
-      nome: '',
-      especie: '',
-      tutorId: '',
-    };
+    try {
+      await apiRequest('/pets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(novoPet.value),
+      });
+      router.push({ name: 'pets' });
+    } catch (erro) {
+      console.error('Erro ao salvar o pet:', erro);
+      erroApi.value = erro.message;
+    }
   }
 
   onMounted(carregarTutores);
@@ -51,6 +52,14 @@
       <h1 class="text-2xl font-bold">Cadastro de Pets</h1>
       <p class="text-body-secondary mb-0">Cadastro de Pets no sistema.</p>
     </header>
+
+    <div
+      v-if="erroApi"
+      class="alert alert-danger"
+      role="alert"
+    >
+      {{ erroApi }}
+    </div>
 
     <!--
     <RouterLink
