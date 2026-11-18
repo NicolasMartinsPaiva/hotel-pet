@@ -7,19 +7,6 @@
     },
     {
       "nome": "Nicolas Martins Paiva",
-      "telefone": "3424234",
-      "email": "paivanicolasmartins@gmail.com",
-      "cpfCnpj": "1542646-89033",
-      "dataNascimento": "",
-      "cep": "89228-201",
-      "numero": "514",
-      "bairro": "Comasa",
-      "cidade": "Joinville",
-      "estado": "SC",
-      "id": "YLlvgR6trQo"
-    },
-    {
-      "nome": "Nicolas Martins Paiva",
       "telefone": "2089437",
       "email": "paivanicolasmartins@gmail.com",
       "cpfCnpj": "1542646-89033",
@@ -30,6 +17,20 @@
       "cidade": "",
       "estado": "",
       "id": "_Amaom1SL9g"
+    },
+    {
+      "nome": "NEILSON DA SILVA PAIVA",
+      "cpfCnpj": "11",
+      "telefone": "11111",
+      "dataNascimento": "1111-11-11",
+      "observacoes": "1111111",
+      "cep": "89228-201",
+      "rua": "Rua João Ebert",
+      "numero": "514",
+      "bairro": "Comasa",
+      "cidade": "Joinville",
+      "estado": "SC",
+      "id": "AvbW-bYBvE4"
     }
   ],
   "pets": [
@@ -56,6 +57,18 @@
       "especie": "Cachorro",
       "tutorId": "MXRZ-DWH2ao",
       "id": "eJQRxlboOdQ"
+    },
+    {
+      "nome": "dsdsds",
+      "especie": "Cachorro",
+      "tutorId": "YLlvgR6trQo",
+      "id": "I3oF66VVrMU"
+    },
+    {
+      "nome": "edee",
+      "especie": "Cachorro",
+      "tutorId": "AvbW-bYBvE4",
+      "id": "dB6l5JmJpzs"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

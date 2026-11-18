@@ -1,25 +1,18 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import { apiRequest } from '../services/api.js';
+
+const API_URL = 'http://localhost:3000';
 
 const pets = ref([]);
 const tutores = ref([]);
-const erroApi = ref('');
 
 async function carregarDados() {
-  try {
-    const [listaPets, listaTutores] = await Promise.all([
-      apiRequest('/pets'),
-      apiRequest('/tutores'),
-    ]);
-    pets.value = listaPets;
-    tutores.value = listaTutores;
-    erroApi.value = '';
-  } catch (erro) {
-    console.error('Erro ao carregar pets e tutores:', erro);
-    erroApi.value = erro.message;
-  }
+  const respostaPets = await fetch(`${API_URL}/pets`);
+  pets.value = await respostaPets.json();
+
+  const respostaTutores = await fetch(`${API_URL}/tutores`);
+  tutores.value = await respostaTutores.json();
 }
 
 function nomeDoTutor(tutorId) {
@@ -35,16 +28,12 @@ async function excluirPet(id) {
   const confirmarExclusao =  window.confirm('Tem certeza que deseja excluir este pet?');
 
   if (confirmarExclusao) {
-    try {
-      await apiRequest(`/pets/${id}`, {
-        method: 'DELETE',
-      });
-      await carregarDados();
-    } catch (erro) {
-      console.error('Erro ao excluir pet:', erro);
-      erroApi.value = erro.message;
-    }
-  }
+   await fetch(`${API_URL}/pets/${id}`, {
+    method: 'DELETE',
+
+  });
+  await carregarDados();
+}
 }
 
 onMounted(carregarDados);
@@ -58,14 +47,6 @@ onMounted(carregarDados);
         Listagem dos Pets cadastrados no sistema.
       </p>
     </header>
-
-    <div
-      v-if="erroApi"
-      class="alert alert-danger"
-      role="alert"
-    >
-      {{ erroApi }}
-    </div>
 
     <table class="table table-striped table-hover ">
       <thead>
@@ -89,12 +70,7 @@ onMounted(carregarDados);
             {{ nomeDoTutor(pet.tutorId) }}
           </td>
           <td>
-            <RouterLink
-              class="btn btn-primary"
-              :to="{ name: 'detalhes-pet', params: { id: pet.id } }"
-            >
-              EDITAR
-            </RouterLink>
+            <RouterLink :to="{ name: 'detalhes-pet', params: { id: pet.id } }">EDITAR</RouterLink>
 
             <button
               class="btn btn-danger"
